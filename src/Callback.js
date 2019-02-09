@@ -12,6 +12,11 @@ class Callback extends Component {
 
   static contextTypes = {};
 
+  state = {
+    me: null,
+    isLoaded: false,
+  };
+
   async componentDidMount() {
 
     const parsed = queryString.parse(this.props.location.hash); // https://github.com/sindresorhus/query-string
@@ -23,19 +28,21 @@ class Callback extends Component {
       meEndpoint,
       { data: null },
       { token: parsed.access_token },
-    ).then(response => console.log(response))
+    ).then(response => this.setState({ me: response.data, isLoaded: true }));
+
+
   }
 
   render() {
+    const { isLoaded, me } = this.state;
+    if (!isLoaded) return <div>Loading...</div>;
+
     return (
       <div className="Callback">
-        <br />
-        This is the Callback component!
-        <br />
-        <br />
-        <span>
-          {JSON.stringify(this.props.location.hash)}
-        </span>
+        <h1>This is me in Spotify... </h1>
+        <div>
+          {JSON.stringify(me)}
+        </div>
       </div>
     );
   }
